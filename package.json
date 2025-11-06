@@ -1,0 +1,50 @@
+{
+  "name": "vue-development-skill",
+  "version": "1.0.0",
+  "description": "Comprehensive guide for building high-quality Vue.js applications with TypeScript, testing-first development, and maintainable architecture",
+  "keywords": [
+    "vue",
+    "vue3",
+    "typescript",
+    "testing",
+    "pinia",
+    "composables",
+    "architecture",
+    "best-practices",
+    "patterns",
+    "elm-architecture",
+    "functional-programming",
+    "testing-library",
+    "vitest",
+    "claude-code",
+    "ai-skill"
+  ],
+  "author": "Alexander Opalic",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexanderopalic/vue-development-skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexanderopalic/vue-development-skill/issues"
+  },
+  "homepage": "https://github.com/alexanderopalic/vue-development-skill#readme",
+  "files": [
+    "docs/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "docs": "echo 'Documentation available in docs/ directory'"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0",
+    "pinia": "^2.1.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
