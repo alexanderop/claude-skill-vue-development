@@ -5,6 +5,126 @@ description: Guide for writing Vue.js applications with TypeScript using Vite, f
 
 # Vue Development Skill
 
+
+## Quick Reference (30-second scan)
+
+### Core Principles (The Non-Negotiables)
+1. **Test user behavior** - Use `getByRole`/`getByLabelText`, never `wrapper.vm`
+2. **Check VueUse first** - Search [vueuse.org](https://vueuse.org/) before implementing any composable
+3. **Functional core, imperative shell** - Pure logic separate from Vue reactivity for complex business logic
+4. **Feature-based architecture** - Organize by features: `src/features/{feature}/{components,composables,stores,tests}`
+5. **Return `{ data, error }`** - Actions/composables return explicit error state, never throw
+
+### Decision Trees
+
+#### State Management Decision Tree
+```
+Is data shared across components?
+├─ NO → Use local ref() or reactive()
+│
+└─ YES → Is it shared between...?
+   ├─ 2-3 specific components → Composable with module-level state
+   │                            (SSR? Use provide/inject)
+   ├─ Server data (API) → pinia-colada or TanStack Vue Query
+   │                       (don't manage server state manually)
+   └─ Global client state → Is it complex (CRUD/business logic)?
+      ├─ YES → Pinia with Composition API
+      │        • Each action returns { data, error }
+      │        • Never calls toast/alert
+      │        • Consumer decides error presentation
+      └─ NO → Composable with module-level state
+              (simple: auth, theme, locale)
+```
+
+#### Composable Extraction Decision Tree
+```
+How complex is the logic?
+├─ Simple (<10 lines, no reuse)
+│  └─ Keep inline in <script setup>
+│
+├─ Medium (10-50 lines)
+│  ├─ Used only in this component?
+│  │  └─ Extract to inline function
+│  │     Example: function useFeature() { /* ... */ }
+│  │
+│  └─ Reused across components?
+│     └─ ⚠️ CHECK VUEUSE FIRST! (vueuse.org)
+│        ├─ Exists in VueUse → Use it
+│        └─ Not in VueUse → Create in features/{feature}/composables/
+│
+└─ Complex (50+ lines OR complex business logic)
+   └─ Separate file
+      └─ Pure business logic?
+         ├─ YES → Functional Core/Shell pattern
+         │        • Pure functions in {feature}/core/
+         │        • Reactive wrapper in {feature}/composables/
+         └─ NO → Single file in {feature}/composables/
+```
+
+#### Testing Stack Decision Tree
+```
+What are you testing?
+├─ Pure functions (no Vue) → Vitest unit tests
+│                            • No mounting, just call function
+│                            • Example: describe('utils', () => { ... })
+│
+├─ Components/Composables → Vitest + Vue Testing Library
+│                           • Use Page Object Pattern
+│                           • getByRole, userEvent.setup()
+│                           • Never access wrapper.vm
+│
+└─ Critical user flows → Playwright E2E
+                         • Login, checkout, data submission
+                         • Real browser, real network
+```
+
+### Anti-Patterns Quick Check
+
+Before committing code, verify you're NOT doing these:
+
+| ❌ Anti-Pattern | ✅ Correct Approach | Location |
+|----------------|-------------------|----------|
+| `wrapper.vm.someProperty` | `screen.getByRole(...)` | TESTING.md |
+| `throw new Error()` in composable | `return { data: null, error }` | STATE-MANAGEMENT.md |
+| `toast.error()` in store/composable | Return error, let consumer show toast | STATE-MANAGEMENT.md |
+| `as UserType` type assertion | Type guard function | TYPESCRIPT.md |
+| `any` type | Use generics or `unknown` + type guard | TYPESCRIPT.md |
+| Event bus for state | Pinia, composables, provide/inject | PATTERNS.md |
+| `fireEvent.click()` | `await user.click()` with userEvent | TESTING.md |
+
+### Pattern Catalog (Quick Links)
+
+#### Component Patterns
+- **Humble Components** - Props down, events up, no business logic → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#1-humble-components-pattern)
+- **Controller Components** - Orchestrate multiple composables → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#2-controller-components)
+- **Extract Conditional** - Complex `v-if`/`v-else` → named components → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#3-extract-conditional-pattern)
+- **Strategy Pattern** - Dynamic component selection with `<component :is>` → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#5-strategy-pattern)
+- **Thin Composables** - Pure logic separate from reactivity → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#9-thin-composables-pattern)
+
+#### State Patterns
+- **Pinia (Composition API)** - Global state with `{ data, error }` return → [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md#pinia-with-composition-api)
+- **Shared State Container** - Module-level reactive for simple shared state → [PATTERNS.md](PATTERNS.md#shared-state-container-pattern)
+- **Functional Core/Shell** - Pure functions + reactive wrappers → [PATTERNS.md](PATTERNS.md#functional-core-imperative-shell)
+
+#### Testing Patterns
+- **Page Object Pattern** - Encapsulate queries/actions at end of test file → [TESTING.md](TESTING.md#basic-structure-with-page-object-pattern)
+- **User Event Testing** - `userEvent.setup()`, never `fireEvent` → [TESTING.md](TESTING.md#user-interactions)
+- **Async Testing** - `findBy*` for async elements, `waitFor` for complex conditions → [TESTING.md](TESTING.md#async-testing)
+
+#### Composition Patterns
+- **Inline Composables** - Extract within component first, file only if reused → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#2-inline-composable-functions)
+- **Explicit Dependencies** - Pass params, avoid module-scope coupling → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#4-explicit-dependencies)
+- **Progressive Extraction** - Inline → function → file → shared directory → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#5-progressive-extraction-strategy)
+
+#### TypeScript Patterns
+- **Discriminated Unions** - Variant props with `type` + `never` fields → [TYPESCRIPT.md](TYPESCRIPT.md#discriminated-unions-for-props)
+- **Generic Components** - `<script setup lang="ts" generic="T">` → [TYPESCRIPT.md](TYPESCRIPT.md#generic-components)
+- **Type Guards** - Runtime validation with `value is Type` → [TYPESCRIPT.md](TYPESCRIPT.md#type-guards)
+
+---
+
+## Detailed Guidance
+
 This skill guides Vue.js development following principles of testability, type safety, feature-based architecture, and clean code patterns.
 
 ## Core Principles

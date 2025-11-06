@@ -1,5 +1,12 @@
 # Architectural Patterns
 
+> **For Claude Code:**
+> - **When to load:** User asks about architecture, functional core/shell, feature-based structure, or code organization
+> - **Quick scan:** Read only "Functional Core, Imperative Shell" summary and "Summary" table at bottom
+> - **Deep dive:** Load full file when implementing complex business logic or refactoring architecture
+> - **Always cite:** Reference specific pattern name (e.g., "Functional Core/Imperative Shell pattern")
+> - **Quick templates:** For copy-paste code, direct user to [QUICK-LOOKUP.md](QUICK-LOOKUP.md)
+
 Detailed patterns for building maintainable Vue applications with feature-based architecture.
 
 ## Functional Core, Imperative Shell

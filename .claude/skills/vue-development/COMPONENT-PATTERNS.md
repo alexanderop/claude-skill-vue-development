@@ -1,5 +1,12 @@
 # Component Design Patterns
 
+> **For Claude Code:**
+> - **When to load:** User asks about component design, patterns, refactoring components, or mentions specific patterns
+> - **Quick scan:** Read only "Core Component Patterns" headers and "Pattern Selection Guide" at bottom
+> - **Deep dive:** Load full file when refactoring complex components or implementing specific patterns
+> - **Always cite:** Reference specific pattern (e.g., "Humble Components pattern" or "Strategy Pattern")
+> - **VueUse reminder:** Always remind user to check VueUse before implementing composables
+
 Design patterns provide proven solutions to common problems in Vue applications. These patterns help you write maintainable, testable, and scalable components.
 
 ## Core Component Patterns

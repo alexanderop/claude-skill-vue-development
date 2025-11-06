@@ -1,5 +1,12 @@
 # Component and Composable Excellence
 
+> **For Claude Code:**
+> - **When to load:** User asks about component structure, composable extraction, `<script setup>` organization, or "best practices"
+> - **Quick scan:** Read only "The Perfect Pattern" section and "Why This Pattern is Perfect" headers
+> - **Deep dive:** Load full file when user needs detailed example of component organization
+> - **Always cite:** Reference "Gold Standard Pattern" or "Progressive Extraction Strategy"
+> - **Key takeaway:** Start inline, extract to inline function, move to file only when reused 2+ times
+
 This document demonstrates the gold standard for organizing Vue components with `<script setup>` and extracting reusable composables. This pattern exemplifies clean architecture, functional decomposition, and maintainable code structure.
 
 ## The Perfect Pattern

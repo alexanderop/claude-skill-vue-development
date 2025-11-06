@@ -1,5 +1,12 @@
 # State Management
 
+> **For Claude Code:**
+> - **When to load:** User asks about state management, Pinia, stores, or choosing between state solutions
+> - **Quick scan:** Read only "When to Use What" table and "Pinia with Composition API" intro
+> - **Deep dive:** Load full file when implementing stores or debugging state management issues
+> - **Always cite:** Reference "Pinia with Composition API" pattern and emphasize `{ data, error }` return pattern
+> - **Quick templates:** For copy-paste store code, direct user to [QUICK-LOOKUP.md](QUICK-LOOKUP.md)
+
 Deep dive into Pinia state management with Composition API, focusing on single responsibility, explicit error handling, and clean separation of concerns.
 
 ## When to Use What

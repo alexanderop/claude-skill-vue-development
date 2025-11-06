@@ -1,5 +1,12 @@
 # Testing Best Practices
 
+> **For Claude Code:**
+> - **When to load:** User asks about testing, writing tests, debugging test failures, or mentions test patterns
+> - **Quick scan:** Read only "Core Philosophy" and "Query Variants" sections for simple questions
+> - **Deep dive:** Load full file when implementing tests or debugging complex test scenarios
+> - **Always cite:** Reference "Page Object Pattern" or specific testing pattern when suggesting tests
+> - **Quick templates:** For copy-paste code, direct user to [QUICK-LOOKUP.md](QUICK-LOOKUP.md)
+
 Testing-first approach using Vue Testing Library.
 
 ## Core Philosophy

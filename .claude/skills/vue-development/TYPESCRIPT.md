@@ -1,5 +1,12 @@
 # TypeScript Patterns
 
+> **For Claude Code:**
+> - **When to load:** User asks about TypeScript, types, discriminated unions, generics, or type safety
+> - **Quick scan:** Read only "Discriminated Unions for Props" and "Common Pitfalls" sections
+> - **Deep dive:** Load full file when implementing complex type patterns or debugging type errors
+> - **Always cite:** Reference specific pattern (e.g., "Discriminated Union pattern" or "Type Guards")
+> - **Quick templates:** For copy-paste type code, direct user to [QUICK-LOOKUP.md](QUICK-LOOKUP.md)
+
 Advanced TypeScript patterns for Vue applications.
 
 ## Core Principles
