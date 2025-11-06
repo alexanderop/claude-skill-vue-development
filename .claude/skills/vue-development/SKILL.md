@@ -65,25 +65,21 @@ See [PATTERNS.md](PATTERNS.md) for more architectural patterns.
 
 Only implement custom composables when VueUse doesn't have what you need.
 
-**File Organization:**
-- Prefix with `use` and PascalCase (e.g., `useCounter.ts`)
-- Place in `composables/` directory
-- Use object arguments for 4+ parameters
-
-**Internal Structure:**
-1. Primary state (main reactive data)
-2. State metadata (loading, error states)
-3. Methods (functions that update state)
-4. Lifecycle hooks
-5. Watch/computed
-6. Return statement
+**Progressive Extraction Strategy:**
+1. **Start inline** - Begin with code directly in `<script setup>`
+2. **Extract to inline functions** - Create composable functions within the same file
+3. **Move to separate file** - Only when reused across 2+ components
+4. **Move to shared** - If generic enough for app-wide use
 
 **Key Patterns:**
 - **Check VueUse First**: Don't reinvent the wheel
 - **Single Responsibility**: One composable, one concern
+- **Explicit Dependencies**: Pass dependencies as parameters
 - **Explicit Error State**: Return `{ data, error, loading }` - never throw
 - **No UI Logic**: No toast/alert calls in composables
 - **Inline First**: Extract functions within components before creating separate files
+
+**See the gold standard:** [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) for real-world examples
 
 **Template:** See [templates/composable.template.ts](templates/composable.template.ts)
 
@@ -144,6 +140,17 @@ type Props = SuccessProps | ErrorProps
 See [TYPESCRIPT.md](TYPESCRIPT.md) for advanced patterns.
 
 ## Component Architecture
+
+### The Gold Standard
+
+**The perfect way to structure Vue components with `<script setup>`:**
+
+1. **Organized imports** - External deps → Reusable functions → GraphQL → Utils
+2. **Inline composables** - Extract focused functions for related state/logic
+3. **Explicit dependencies** - Pass parameters instead of implicit coupling
+4. **Progressive extraction** - Move to files only when reused
+
+**Real-world example:** See [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) for a production-grade component demonstrating this pattern.
 
 ### Component Design Patterns
 
@@ -289,11 +296,12 @@ See [PATTERNS.md](PATTERNS.md) for more architectural patterns.
 ## Getting Started
 
 1. Review this SKILL.md for essential principles
-2. Check relevant detailed docs:
+2. **Study the gold standard:** [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) - Perfect `<script setup>` organization
+3. Check relevant detailed docs:
    - [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md) - 13+ component design patterns
    - [PATTERNS.md](PATTERNS.md) - Architectural patterns & feature-based structure
    - [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md) - Pinia + Elm deep dive
    - [TESTING.md](TESTING.md) - Testing Library practices
    - [TYPESCRIPT.md](TYPESCRIPT.md) - Type safety patterns
-3. Use templates for scaffolding new code
-4. Always prioritize testability, type safety, and feature-based organization
+4. Use templates for scaffolding new code
+5. Always prioritize testability, type safety, and feature-based organization

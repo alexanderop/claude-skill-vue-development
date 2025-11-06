@@ -15,7 +15,16 @@
 // ============================================
 // IMPORTS
 // ============================================
+// External dependencies
 import { ref, computed, watch, onMounted } from 'vue'
+
+// Reusable functions (not component-specific)
+// import { useNetworkState } from '@/composables/network'
+// import { useAuth } from '@/composables/auth'
+
+// Feature-specific services/utilities
+// import { validateForm } from '../utils/validation'
+// import { formatDate } from '@/utils/date'
 
 // ============================================
 // TYPES
@@ -66,69 +75,102 @@ const emit = defineEmits<{
 }>()
 
 // ============================================
-// COMPOSABLES
+// COMPOSABLES - COMPONENT-LEVEL ORCHESTRATION
 // ============================================
-// Import and use composables
-// const { data, isLoading, error, load } = useData()
+// Use reusable composables
+// const { user, isAuthenticated } = useAuth()
+// const { isOnline } = useNetworkState()
+
+// Use inline composables (defined below)
+const { localValue, isProcessing, handleSubmit, handleChange, handleCancel } = useFormState()
+const { displayItems, hasItems } = useItemsDisplay()
 
 // ============================================
-// STATE
+// INLINE COMPOSABLES (COMPONENT-SPECIFIC)
 // ============================================
-const localValue = ref('')
-const isProcessing = ref(false)
+// Extract related state and logic into focused composable functions
+// These stay in the same file until reused across multiple components
 
-// ============================================
-// COMPUTED
-// ============================================
-const displayItems = computed(() => {
-  if (props.variant === 'a') {
-    return props.itemsA
-  } else {
-    return props.itemsB
-  }
-})
+/**
+ * Manages form state and submission
+ *
+ * This composable handles:
+ * - Form input value
+ * - Processing state
+ * - Form submission logic
+ * - Form reset
+ */
+function useFormState() {
+  const localValue = ref('')
+  const isProcessing = ref(false)
 
-const hasItems = computed(() => displayItems.value.length > 0)
+  function handleSubmit() {
+    if (isProcessing.value) return
 
-// ============================================
-// METHODS
-// ============================================
-function handleSubmit() {
-  if (isProcessing.value) return
+    isProcessing.value = true
 
-  isProcessing.value = true
+    try {
+      // Process data
+      const formData = {
+        value: localValue.value
+      }
 
-  try {
-    // Process data
-    const formData = {
-      value: localValue.value
+      emit('submit', formData)
+    } finally {
+      isProcessing.value = false
     }
+  }
 
-    emit('submit', formData)
-  } finally {
-    isProcessing.value = false
+  function handleChange(value: string) {
+    localValue.value = value
+    emit('change', value)
+  }
+
+  function handleCancel() {
+    localValue.value = ''
+    emit('cancel')
+  }
+
+  return {
+    localValue,
+    isProcessing,
+    handleSubmit,
+    handleChange,
+    handleCancel
   }
 }
 
-function handleChange(value: string) {
-  localValue.value = value
-  emit('change', value)
-}
+/**
+ * Manages items display logic
+ *
+ * This composable handles:
+ * - Selecting correct items based on variant
+ * - Computing derived state (hasItems)
+ */
+function useItemsDisplay() {
+  const displayItems = computed(() => {
+    if (props.variant === 'a') {
+      return props.itemsA
+    } else {
+      return props.itemsB
+    }
+  })
 
-function handleCancel() {
-  localValue.value = ''
-  emit('cancel')
-}
+  const hasItems = computed(() => displayItems.value.length > 0)
 
-// ============================================
-// WATCHERS
-// ============================================
-watch(
-  () => props.title,
-  (newTitle) => {
-    console.log('Title changed:', newTitle)
+  // Watch for changes (example)
+  watch(
+    () => props.title,
+    (newTitle) => {
+      console.log('Title changed:', newTitle)
+    }
+  )
+
+  return {
+    displayItems,
+    hasItems
   }
-)
+}
 
 // ============================================
 // LIFECYCLE

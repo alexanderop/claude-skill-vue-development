@@ -7,11 +7,12 @@
 This is an **Agent Skill** for Claude Code that provides expert guidance on Vue.js development. When installed, Claude automatically uses this skill when you're working with Vue.js code, components, composables, stores, or asking about Vue best practices.
 
 **Key Features:**
+- **The Gold Standard Pattern**: Real-world example of perfect component organization with `<script setup>`
 - **Component Design Patterns**: 13+ proven patterns for maintainable, testable components
 - **Testing-First Approach**: Write tests that survive refactoring
 - **Functional Core, Imperative Shell**: Separate pure logic from framework code
 - **Feature-Based Architecture**: Organize code by features, not file types
-- **Composables Best Practices**: When and how to extract reusable logic
+- **Composables Best Practices**: Progressive extraction strategy with inline composables
 - **Pinia with Composition API**: Single responsibility, explicit error handling, no UI logic in stores
 - **TypeScript Patterns**: Type-safe components with discriminated unions
 - **Comprehensive Templates**: Ready-to-use templates for components, composables, stores, and tests
@@ -88,6 +89,7 @@ The skill is located in `.claude/skills/vue-development/` and contains:
 ```
 .claude/skills/vue-development/
 ├── SKILL.md                    # Main skill instructions (Claude reads this)
+├── COMPOSITION-EXCELLENCE.md   # Gold standard for component & composable organization
 ├── COMPONENT-PATTERNS.md       # 13+ component design patterns
 ├── PATTERNS.md                 # Architectural patterns & feature-based structure
 ├── STATE-MANAGEMENT.md         # Pinia with Composition API patterns
@@ -109,11 +111,12 @@ Claude reads these files progressively - starting with SKILL.md and loading othe
 These documents are also available in the `docs/` directory for your reference:
 
 1. **[.claude/skills/vue-development/SKILL.md](.claude/skills/vue-development/SKILL.md)** - Overview of all principles and practices
-2. **[.claude/skills/vue-development/COMPONENT-PATTERNS.md](.claude/skills/vue-development/COMPONENT-PATTERNS.md)** - 13+ component design patterns
-3. **[.claude/skills/vue-development/PATTERNS.md](.claude/skills/vue-development/PATTERNS.md)** - Architectural patterns and feature-based structure
-4. **[.claude/skills/vue-development/STATE-MANAGEMENT.md](.claude/skills/vue-development/STATE-MANAGEMENT.md)** - Deep dive into Pinia with Composition API
-5. **[.claude/skills/vue-development/TESTING.md](.claude/skills/vue-development/TESTING.md)** - Testing Library best practices
-6. **[.claude/skills/vue-development/TYPESCRIPT.md](.claude/skills/vue-development/TYPESCRIPT.md)** - Advanced TypeScript patterns
+2. **[.claude/skills/vue-development/COMPOSITION-EXCELLENCE.md](.claude/skills/vue-development/COMPOSITION-EXCELLENCE.md)** - **START HERE**: Gold standard for component organization
+3. **[.claude/skills/vue-development/COMPONENT-PATTERNS.md](.claude/skills/vue-development/COMPONENT-PATTERNS.md)** - 13+ component design patterns
+4. **[.claude/skills/vue-development/PATTERNS.md](.claude/skills/vue-development/PATTERNS.md)** - Architectural patterns and feature-based structure
+5. **[.claude/skills/vue-development/STATE-MANAGEMENT.md](.claude/skills/vue-development/STATE-MANAGEMENT.md)** - Deep dive into Pinia with Composition API
+6. **[.claude/skills/vue-development/TESTING.md](.claude/skills/vue-development/TESTING.md)** - Testing Library best practices
+7. **[.claude/skills/vue-development/TYPESCRIPT.md](.claude/skills/vue-development/TYPESCRIPT.md)** - Advanced TypeScript patterns
 
 ### Templates
 
@@ -125,6 +128,19 @@ Ready-to-use code templates in `.claude/skills/vue-development/templates/`:
 - **test.template.ts** - Component test structure
 
 ## Core Principles
+
+### 0. The Gold Standard Pattern ⭐
+
+**The perfect way to structure Vue components with `<script setup>`:**
+
+See **[COMPOSITION-EXCELLENCE.md](.claude/skills/vue-development/COMPOSITION-EXCELLENCE.md)** for a complete real-world example demonstrating:
+
+- **Organized imports** - External deps → Reusable functions → GraphQL → Utils
+- **Inline composables** - Extract focused functions for related state/logic
+- **Explicit dependencies** - Pass parameters instead of implicit coupling
+- **Progressive extraction** - Move to files only when reused
+
+This document shows a production-grade component that exemplifies perfect organization and demonstrates when to extract composables vs. keeping logic inline.
 
 ### 1. Testing-First Mindset
 
