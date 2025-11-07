@@ -1,0 +1,31 @@
+{
+  "name": "vue-starter-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "vue": "^3.5.0",
+    "vue-router": "^4.4.0",
+    "pinia": "^2.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "@testing-library/vue": "^8.1.0",
+    "@testing-library/user-event": "^14.5.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.0.0",
+    "vue-tsc": "^2.0.0",
+    "@playwright/test": "^1.45.0",
+    "jsdom": "^24.1.0"
+  }
+}

@@ -1,6 +1,6 @@
 ---
 name: vue-development
-description: Guide for writing Vue.js applications with TypeScript using Vite, focusing on testing-first development, functional patterns, Pinia with Composition API, feature-based architecture, composables best practices, and type safety. Use when creating Vue components, composables, stores, or reviewing Vue code for best practices.
+description: This skill should be used when creating or working with Vue.js applications using TypeScript and Vite. Provides guidance on testing-first development with Testing Library, functional core/imperative shell patterns, Pinia state management with Composition API, feature-based architecture, composable best practices, and type safety. Apply when creating Vue components (.vue files), composables (useX functions), Pinia stores, writing component tests, reviewing Vue code for best practices, or architecting Vue applications. Always check VueUse before implementing custom composables.
 ---
 
 # Vue Development Skill
@@ -84,42 +84,42 @@ Before committing code, verify you're NOT doing these:
 
 | ❌ Anti-Pattern | ✅ Correct Approach | Location |
 |----------------|-------------------|----------|
-| `wrapper.vm.someProperty` | `screen.getByRole(...)` | TESTING.md |
-| `throw new Error()` in composable | `return { data: null, error }` | STATE-MANAGEMENT.md |
-| `toast.error()` in store/composable | Return error, let consumer show toast | STATE-MANAGEMENT.md |
-| `as UserType` type assertion | Type guard function | TYPESCRIPT.md |
-| `any` type | Use generics or `unknown` + type guard | TYPESCRIPT.md |
-| Event bus for state | Pinia, composables, provide/inject | PATTERNS.md |
-| `fireEvent.click()` | `await user.click()` with userEvent | TESTING.md |
+| `wrapper.vm.someProperty` | `screen.getByRole(...)` | references/TESTING.md |
+| `throw new Error()` in composable | `return { data: null, error }` | references/STATE-MANAGEMENT.md |
+| `toast.error()` in store/composable | Return error, let consumer show toast | references/STATE-MANAGEMENT.md |
+| `as UserType` type assertion | Type guard function | references/TYPESCRIPT.md |
+| `any` type | Use generics or `unknown` + type guard | references/TYPESCRIPT.md |
+| Event bus for state | Pinia, composables, provide/inject | references/PATTERNS.md |
+| `fireEvent.click()` | `await user.click()` with userEvent | references/TESTING.md |
 
 ### Pattern Catalog (Quick Links)
 
 #### Component Patterns
-- **Humble Components** - Props down, events up, no business logic → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#1-humble-components-pattern)
-- **Controller Components** - Orchestrate multiple composables → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#2-controller-components)
-- **Extract Conditional** - Complex `v-if`/`v-else` → named components → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#3-extract-conditional-pattern)
-- **Strategy Pattern** - Dynamic component selection with `<component :is>` → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#5-strategy-pattern)
-- **Thin Composables** - Pure logic separate from reactivity → [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md#9-thin-composables-pattern)
+- **Humble Components** - Props down, events up, no business logic → [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md#1-humble-components-pattern)
+- **Controller Components** - Orchestrate multiple composables → [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md#2-controller-components)
+- **Extract Conditional** - Complex `v-if`/`v-else` → named components → [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md#3-extract-conditional-pattern)
+- **Strategy Pattern** - Dynamic component selection with `<component :is>` → [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md#5-strategy-pattern)
+- **Thin Composables** - Pure logic separate from reactivity → [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md#9-thin-composables-pattern)
 
 #### State Patterns
-- **Pinia (Composition API)** - Global state with `{ data, error }` return → [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md#pinia-with-composition-api)
-- **Shared State Container** - Module-level reactive for simple shared state → [PATTERNS.md](PATTERNS.md#shared-state-container-pattern)
-- **Functional Core/Shell** - Pure functions + reactive wrappers → [PATTERNS.md](PATTERNS.md#functional-core-imperative-shell)
+- **Pinia (Composition API)** - Global state with `{ data, error }` return → [references/STATE-MANAGEMENT.md](references/STATE-MANAGEMENT.md#pinia-with-composition-api)
+- **Shared State Container** - Module-level reactive for simple shared state → [references/PATTERNS.md](references/PATTERNS.md#shared-state-container-pattern)
+- **Functional Core/Shell** - Pure functions + reactive wrappers → [references/PATTERNS.md](references/PATTERNS.md#functional-core-imperative-shell)
 
 #### Testing Patterns
-- **Page Object Pattern** - Encapsulate queries/actions at end of test file → [TESTING.md](TESTING.md#basic-structure-with-page-object-pattern)
-- **User Event Testing** - `userEvent.setup()`, never `fireEvent` → [TESTING.md](TESTING.md#user-interactions)
-- **Async Testing** - `findBy*` for async elements, `waitFor` for complex conditions → [TESTING.md](TESTING.md#async-testing)
+- **Page Object Pattern** - Encapsulate queries/actions at end of test file → [references/TESTING.md](references/TESTING.md#basic-structure-with-page-object-pattern)
+- **User Event Testing** - `userEvent.setup()`, never `fireEvent` → [references/TESTING.md](references/TESTING.md#user-interactions)
+- **Async Testing** - `findBy*` for async elements, `waitFor` for complex conditions → [references/TESTING.md](references/TESTING.md#async-testing)
 
 #### Composition Patterns
-- **Inline Composables** - Extract within component first, file only if reused → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#2-inline-composable-functions)
-- **Explicit Dependencies** - Pass params, avoid module-scope coupling → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#4-explicit-dependencies)
-- **Progressive Extraction** - Inline → function → file → shared directory → [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md#5-progressive-extraction-strategy)
+- **Inline Composables** - Extract within component first, file only if reused → [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md#2-inline-composable-functions)
+- **Explicit Dependencies** - Pass params, avoid module-scope coupling → [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md#4-explicit-dependencies)
+- **Progressive Extraction** - Inline → function → file → shared directory → [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md#5-progressive-extraction-strategy)
 
 #### TypeScript Patterns
-- **Discriminated Unions** - Variant props with `type` + `never` fields → [TYPESCRIPT.md](TYPESCRIPT.md#discriminated-unions-for-props)
-- **Generic Components** - `<script setup lang="ts" generic="T">` → [TYPESCRIPT.md](TYPESCRIPT.md#generic-components)
-- **Type Guards** - Runtime validation with `value is Type` → [TYPESCRIPT.md](TYPESCRIPT.md#type-guards)
+- **Discriminated Unions** - Variant props with `type` + `never` fields → [references/TYPESCRIPT.md](references/TYPESCRIPT.md#discriminated-unions-for-props)
+- **Generic Components** - `<script setup lang="ts" generic="T">` → [references/TYPESCRIPT.md](references/TYPESCRIPT.md#generic-components)
+- **Type Guards** - Runtime validation with `value is Type` → [references/TYPESCRIPT.md](references/TYPESCRIPT.md#type-guards)
 
 ---
 
@@ -141,7 +141,7 @@ This skill guides Vue.js development following principles of testability, type s
 
 **Stack:** Vitest + Testing Library + Playwright (E2E)
 
-See [TESTING.md](TESTING.md) for detailed practices.
+See [references/TESTING.md](references/TESTING.md) for detailed practices.
 
 ### 2. Functional Core, Imperative Shell
 
@@ -171,7 +171,7 @@ export function useGameSnake() {
 }
 ```
 
-See [PATTERNS.md](PATTERNS.md) for more architectural patterns.
+See [references/PATTERNS.md](references/PATTERNS.md) for more architectural patterns.
 
 ### 3. Composables Best Practices
 
@@ -199,7 +199,7 @@ Only implement custom composables when VueUse doesn't have what you need.
 - **No UI Logic**: No toast/alert calls in composables
 - **Inline First**: Extract functions within components before creating separate files
 
-**See the gold standard:** [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) for real-world examples
+**See the gold standard:** [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md) for real-world examples
 
 **Template:** See [templates/composable.template.ts](templates/composable.template.ts)
 
@@ -226,7 +226,7 @@ Only implement custom composables when VueUse doesn't have what you need.
 - Server state → pinia-colada, TanStack Vue Query
 - Cross-component communication → provide/inject
 
-See [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md) for detailed patterns and examples.
+See [references/STATE-MANAGEMENT.md](references/STATE-MANAGEMENT.md) for detailed patterns and examples.
 
 **Template:** See [templates/store.template.ts](templates/store.template.ts)
 
@@ -257,7 +257,7 @@ type Props = SuccessProps | ErrorProps
 - Extract utility types for reusability
 - Use type guards for runtime validation
 
-See [TYPESCRIPT.md](TYPESCRIPT.md) for advanced patterns.
+See [references/TYPESCRIPT.md](references/TYPESCRIPT.md) for advanced patterns.
 
 ## Component Architecture
 
@@ -270,7 +270,7 @@ See [TYPESCRIPT.md](TYPESCRIPT.md) for advanced patterns.
 3. **Explicit dependencies** - Pass parameters instead of implicit coupling
 4. **Progressive extraction** - Move to files only when reused
 
-**Real-world example:** See [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) for a production-grade component demonstrating this pattern.
+**Real-world example:** See [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md) for a production-grade component demonstrating this pattern.
 
 ### Component Design Patterns
 
@@ -283,7 +283,7 @@ Key patterns include:
 - **Strategy Pattern** - Dynamic component selection
 - **Thin Composables** - Separate pure logic from reactivity
 
-See [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md) for detailed patterns with examples.
+See [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md) for detailed patterns with examples.
 
 ### Naming Conventions
 - **Base components**: `BaseButton.vue`, `BaseTable.vue`, `BaseIcon.vue`
@@ -353,7 +353,7 @@ src/
 - Scales well as app grows
 - Easy to onboard new developers
 
-See [PATTERNS.md](PATTERNS.md) for more architectural patterns.
+See [references/PATTERNS.md](references/PATTERNS.md) for more architectural patterns.
 
 ## Anti-Patterns to Avoid
 
@@ -416,12 +416,57 @@ See [PATTERNS.md](PATTERNS.md) for more architectural patterns.
 ## Getting Started
 
 1. Review this SKILL.md for essential principles
-2. **Study the gold standard:** [COMPOSITION-EXCELLENCE.md](COMPOSITION-EXCELLENCE.md) - Perfect `<script setup>` organization
+2. **Study the gold standard:** [references/COMPOSITION-EXCELLENCE.md](references/COMPOSITION-EXCELLENCE.md) - Perfect `<script setup>` organization
 3. Check relevant detailed docs:
-   - [COMPONENT-PATTERNS.md](COMPONENT-PATTERNS.md) - 13+ component design patterns
-   - [PATTERNS.md](PATTERNS.md) - Architectural patterns & feature-based structure
-   - [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md) - Pinia + Elm deep dive
-   - [TESTING.md](TESTING.md) - Testing Library practices
-   - [TYPESCRIPT.md](TYPESCRIPT.md) - Type safety patterns
+   - [references/COMPONENT-PATTERNS.md](references/COMPONENT-PATTERNS.md) - 13+ component design patterns
+   - [references/PATTERNS.md](references/PATTERNS.md) - Architectural patterns & feature-based structure
+   - [references/STATE-MANAGEMENT.md](references/STATE-MANAGEMENT.md) - Pinia + Elm deep dive
+   - [references/TESTING.md](references/TESTING.md) - Testing Library practices
+   - [references/TYPESCRIPT.md](references/TYPESCRIPT.md) - Type safety patterns
 4. Use templates for scaffolding new code
 5. Always prioritize testability, type safety, and feature-based organization
+
+## Skill Resources
+
+This skill includes bundled resources to help with Vue development tasks:
+
+### scripts/
+Executable utilities to automate common Vue development tasks.
+
+**Available scripts:**
+- `init_vue_component.py` - Initialize new Vue components with test files
+  - Creates component in PascalCase with proper structure
+  - Generates corresponding test file with Testing Library setup
+  - Usage: `python scripts/init_vue_component.py ComponentName --path src/features/feature/components`
+- `validate_skill.py` - Validate the skill structure and required files
+- `package_skill.py` - Package the skill into a distributable zip file
+
+### references/
+In-depth documentation loaded into context when needed by Claude.
+
+**Available references:**
+- `COMPONENT-PATTERNS.md` - 13+ proven component design patterns
+- `COMPOSITION-EXCELLENCE.md` - Gold standard component organization
+- `PATTERNS.md` - Architectural patterns and project structure
+- `STATE-MANAGEMENT.md` - Pinia with Composition API deep dive
+- `TESTING.md` - Testing Library best practices
+- `TYPESCRIPT.md` - Advanced TypeScript patterns
+
+### templates/
+Code templates for creating new Vue code (see templates/ directory).
+
+**Available templates:**
+- `component.template.vue` - Vue component with `<script setup>`
+- `composable.template.ts` - Composable function with error handling
+- `store.template.ts` - Pinia store with Composition API
+- `test.template.ts` - Component test with Testing Library
+
+### assets/
+Boilerplate project structure (not loaded into context, used as reference).
+
+**Available assets:**
+- `vue-starter-project/` - Minimal Vite + Vue 3 + TypeScript project
+  - Demonstrates feature-based architecture
+  - Includes testing setup (Vitest + Testing Library)
+  - Example Pinia store and composable
+  - Production-ready configuration
