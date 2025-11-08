@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "vue-development",
-      "source": ".",
+      "source": "./",
       "description": "Modern Vue 3 development with TypeScript, Composition API, and user-behavior testing"
     }
   ]
