@@ -1,5 +1,18 @@
 # Vue Router Patterns Reference
 
+## Table of Contents
+- [Route Structure](#route-structure)
+- [Route Groups](#route-groups)
+- [File Naming Patterns](#file-naming-patterns)
+- [Route Params Best Practices](#route-params-best-practices)
+- [Navigation with Type Safety](#navigation-with-type-safety)
+- [Using Route Data in Components](#using-route-data-in-components)
+- [definePage() Customization](#definepage-customization)
+- [Typed Router Reference](#typed-router-reference)
+- [Route Layouts](#route-layouts)
+- [Navigation Guards (Per-Route)](#navigation-guards-per-route)
+- [Fetch Route Data](#fetch-route-data)
+
 ## Route Structure
 
 File-based routing using unplugin-vue-router or similar.

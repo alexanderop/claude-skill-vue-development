@@ -34,13 +34,13 @@ If you catch yourself thinking or doing ANY of these, STOP:
 
 ## Quick Rules
 
-**Components:** `defineProps<{ }>()` (no const unless used in script), `defineEmits<{ event: [args] }>()`, `defineModel<type>()` for v-model. See @references/component-patterns.md + quick-examples.md
+**Components:** `defineProps<{ }>()` (no const unless used in script), `defineEmits<{ event: [args] }>()`, `defineModel<type>()` for v-model. See @references/component-patterns.md
 
 **Testing:** `@testing-library/vue` + MSW. Use `findBy*` or `waitFor()` for async. NEVER `setTimeout()` or test internal state. See @references/testing-patterns.md
 
-**Routing:** Explicit params `[userId]` not `[id]`. Avoid `index.vue`, use `(name).vue`. Use `.` for nesting: `users.edit.vue` → `/users/edit`. See @references/routing-patterns.md + quick-examples.md
+**Routing:** Explicit params `[userId]` not `[id]`. Avoid `index.vue`, use `(name).vue`. Use `.` for nesting: `users.edit.vue` → `/users/edit`. See @references/routing-patterns.md
 
-**Composables:** Prefix with `use`, NO UI logic (expose error state instead). See @references/composable-patterns.md + quick-examples.md
+**Composables:** Prefix with `use`, NO UI logic (expose error state instead). See @references/composable-patterns.md
 
 ## Key Pattern: defineModel()
 
@@ -64,33 +64,48 @@ const lastName = defineModel<string>('lastName')
 
 **Why:** Reduces 5 lines of boilerplate to 1. No manual `modelValue` prop + `update:modelValue` emit.
 
-**See @references/quick-examples.md for complete pattern examples (props, emits, testing, routes, composables)**
+## Component Implementation Workflow
 
+When implementing complex Vue components, use TodoWrite to track progress:
+
+```
+TodoWrite checklist for component implementation:
+- [ ] Define TypeScript interfaces for props/emits/models
+- [ ] Implement props with defineProps<{ }>() (no const unless used in script)
+- [ ] Implement emits with defineEmits<{ event: [args] }>()
+- [ ] Add v-model with defineModel<type>() if needed
+- [ ] Write user-behavior tests with Testing Library
+- [ ] Test async behavior with findBy* queries or waitFor()
+- [ ] Verify: No red flags, no setTimeout in tests, all types present
+```
+
+**When to create TodoWrite todos:**
+- Implementing new components with state, v-model, and testing
+- Refactoring components to modern patterns
+- Adding routing with typed params
+- Creating composables with async logic
 
 ## Rationalizations Table
 
 | Excuse | Reality |
 |--------|---------|
-| "For speed / quick demo" | TypeScript IS fast. Runtime validation is legacy and slower. |
-| "Emergency - no time for best practices" | Correct patterns take SAME time. Bad code under pressure = future emergencies. |
-| "TypeScript is too verbose" | `defineProps<{ count: number }>()` is LESS code than runtime validation. |
-| "We can clean it up later" | Write it correctly the first time. Takes same time. |
+| "For speed/emergency/no time" | Correct patterns take SAME time. TypeScript IS fast. |
+| "TypeScript is too verbose" | `defineProps<{ count: number }>()` is LESS code. |
+| "We can clean it up later" | Write it right the first time. |
 | "This is production-ready" | Without type safety, it's not production-ready. |
 | "Simple array syntax is fine" | Missing types = runtime errors TypeScript would catch. |
-| "This is the correct pattern" | Manual modelValue was correct in Vue 2. Use defineModel() in Vue 3.4+. |
-| "Tests are flaky, just add timeout" | Timeouts mask bugs. Fix with proper async handling. |
-| "Following existing code style" | Existing code might be legacy. Use modern patterns. First new pattern starts improvement. |
-| "Task explicitly stated X" | Understand INTENT, not literal words. Bad requirements need good implementation. |
-| "Don't mix approaches / Consistency" | First instance of new pattern is how you START improvement. |
-| "Composables can show toasts" | UI logic belongs in components. Expose error state instead. |
-| "[id] is industry standard" | Old standard from generic routers. Modern TypeScript routers use explicit names for type safety. |
-| "Generic [id] is flexible" | Specific names prevent route param bugs and enable TypeScript autocomplete. |
+| "Manual modelValue was correct" | That was Vue 2. Use defineModel() in Vue 3.4+. |
+| "Tests are flaky, add timeout" | Timeouts mask bugs. Use proper async handling. |
+| "Following existing code style" | Legacy code exists. Use modern patterns to improve. |
+| "Task explicitly stated X" | Understand INTENT. Bad requirements need good implementation. |
+| "Composables can show toasts" | UI belongs in components. Expose error state. |
+| "[id] is industry standard" | Explicit names prevent bugs, enable TypeScript autocomplete. |
 | "counter.ts is fine" | Must prefix with 'use': useCounter.ts |
-| "test-utils is the standard" | Testing Library is the gold standard for user-behavior testing. |
+| "test-utils is the standard" | Testing Library is gold standard for user-behavior. |
 
 ## Detailed References
 
-See @references/ directory for comprehensive guides: component-patterns.md, testing-patterns.md, testing-composables.md, routing-patterns.md, composable-patterns.md, quick-examples.md
+See @references/ directory for comprehensive guides: component-patterns.md, testing-patterns.md, testing-composables.md, routing-patterns.md, composable-patterns.md
 
 
 ## When NOT to Use This Skill

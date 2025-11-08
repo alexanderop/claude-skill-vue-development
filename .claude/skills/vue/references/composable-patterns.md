@@ -1,8 +1,26 @@
 # Vue Composables Best Practices Reference
 
+## Table of Contents
+- [What is a Composable?](#what-is-a-composable)
+- [File Naming and Structure](#file-naming-and-structure)
+- [Composable Anatomy](#composable-anatomy)
+- [Single Responsibility Principle](#single-responsibility-principle)
+- [Argument Passing](#argument-passing)
+- [Error Handling](#error-handling)
+- [Separation of Concerns: No UI Logic](#separation-of-concerns-no-ui-logic-in-composables)
+- [Functional Core, Imperative Shell](#functional-core-imperative-shell-optional-pattern)
+- [Consistent File Structure](#consistent-file-structure)
+- [Composable Composition](#composable-composition)
+- [Return Values](#return-values)
+- [TypeScript Best Practices](#typescript-best-practices)
+- [Common Patterns](#common-patterns)
+- [Testing Composables](#testing-composables)
+- [Common Mistakes](#common-mistakes)
+- [Quick Checklist](#quick-checklist)
+
 ## What is a Composable?
 
-A composable is a function that leverages Vue's Composition API to encapsulate and reuse stateful logic. Composables are the Vue 3 equivalent of mixins but with better composition and type safety.
+Composables encapsulate reusable stateful logic using Vue's Composition API.
 
 ## File Naming and Structure
 
@@ -195,26 +213,29 @@ Composables handle STATE and BUSINESS LOGIC only. UI concerns (toasts, alerts, m
 export function useUserData(userId: string) {
   const user = ref<User | null>(null)
   const error = ref<Error | null>(null)
+  const status = ref<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   const fetchUser = async () => {
+    status.value = 'loading'
     try {
       const response = await axios.get(`/api/users/${userId}`)
       user.value = response.data
+      status.value = 'success'
     } catch (e) {
       error.value = e as Error
+      status.value = 'error'
     }
   }
 
-  return { user, error, fetchUser }
+  return { user, error, status, fetchUser }
 }
 
-// In component
-const { user, error, fetchUser } = useUserData(userId)
+// In component - UI layer handles presentation
+const { user, error, status, fetchUser } = useUserData(userId)
 
-watch(error, (newError) => {
-  if (newError) {
-    showToast('Failed to load user')  // UI logic in component
-  }
+watch(status, (s) => {
+  if (s === 'success') showToast('Success!')  // UI in component
+  if (s === 'error') showToast(`Error: ${error.value?.message}`)
 })
 
 // ❌ WRONG: UI logic in composable
@@ -233,6 +254,12 @@ export function useUserDataBad(userId: string) {
   return { user, fetchUser }
 }
 ```
+
+**Why separation matters:**
+- Composable is testable without mocking UI
+- Different components can use different UI (toast, modal, inline error)
+- Composable works in non-UI contexts (background tasks, SSR)
+- Follows separation of concerns
 
 ## Functional Core, Imperative Shell (Optional Pattern)
 

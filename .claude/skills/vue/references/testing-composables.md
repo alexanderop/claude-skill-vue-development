@@ -1,8 +1,20 @@
 # Testing Vue Composables in Isolation
 
+## Table of Contents
+- [Overview](#overview)
+- [Composable Categories](#composable-categories)
+- [Testing Independent Composables](#testing-independent-composables)
+- [Testing Dependent Composables](#testing-dependent-composables)
+- [Testing Composables with Inject](#testing-composables-with-inject)
+- [Testing Patterns](#testing-patterns)
+- [Common Testing Mistakes](#common-testing-mistakes)
+- [Testing Checklist](#testing-checklist)
+- [Quick Reference](#quick-reference)
+- [Summary](#summary)
+
 ## Overview
 
-Testing composables requires understanding whether they are **independent** or **dependent** on Vue's component lifecycle.
+Test composables based on whether they're independent (reactivity only) or dependent (lifecycle/inject).
 
 ## Composable Categories
 

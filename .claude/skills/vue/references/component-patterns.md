@@ -1,5 +1,13 @@
 # Vue Component Patterns Reference
 
+## Table of Contents
+- [Props Definition](#props-definition)
+- [Emits Definition](#emits-definition)
+- [V-Model Bindings](#v-model-bindings)
+- [Template Patterns](#template-patterns)
+- [Component Naming](#component-naming)
+- [V-Model Modifiers](#v-model-modifiers)
+
 ## Props Definition
 
 ```vue

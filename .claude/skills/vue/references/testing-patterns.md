@@ -1,5 +1,16 @@
 # Vue Testing Patterns Reference
 
+## Table of Contents
+- [Testing Philosophy](#testing-philosophy)
+- [Primary Approach: Testing Library](#primary-approach-testing-library)
+- [Async Testing](#async-testing)
+- [MSW API Mocking](#msw-api-mocking)
+- [Testing Library Queries Priority](#testing-library-queries-priority)
+- [User Interactions](#user-interactions)
+- [Component Library Testing (Fallback)](#component-library-testing-fallback)
+- [Common Testing Mistakes](#common-testing-mistakes)
+- [Testing Checklist](#testing-checklist)
+
 ## Testing Philosophy
 
 **Gold standard:** Test user behavior, not implementation details.
