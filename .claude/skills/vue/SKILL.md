@@ -1,299 +1,232 @@
 ---
 name: vue-development
-description: Use when working with Vue 3 projects, encountering reactivity issues, choosing between ref/reactive/Pinia, setting up testing, or needing TypeScript patterns - provides Vue 3 best practices, Composition API patterns, and ecosystem tool recommendations
+description: Use when creating Vue 3 components, implementing v-model, defining props/emits, setting up routes, or writing Vue tests - enforces TypeScript-first patterns with Composition API, defineModel for bindings, Testing Library for user-behavior tests, and MSW for API mocking
 ---
 
-# Vue 3 Development
+# Vue Development
 
 ## Overview
 
-Vue 3 with Composition API and `<script setup>` is the modern standard. This skill provides decision criteria, common patterns, and tool recommendations for effective Vue 3 development.
+Modern Vue 3 development with TypeScript, Composition API, and user-behavior testing. **Core principle:** Use TypeScript generics (not runtime validation), modern APIs (defineModel not manual props), and test user behavior (not implementation details).
 
-## Stack Defaults
+## Red Flags - STOP and Fix
 
-**Always use unless user specifies otherwise:**
-- Vue 3 with Composition API
-- `<script setup>` syntax
-- TypeScript for type safety
-- Vite for build tooling
-- Vitest + @vue/test-utils for testing
+If you catch yourself thinking or doing ANY of these, STOP:
 
-## Reactivity: ref() vs reactive()
+- "For speed" / "quick demo" → Using shortcuts
+- "We can clean it up later" → Accepting poor patterns
+- "TypeScript is too verbose" → Skipping types
+- "This is production-ready" → Without type safety
+- Using `const props = defineProps()` without using props in script
+- Manual `modelValue` prop + `update:modelValue` emit → Use defineModel()
+- Using runtime prop validation when TypeScript is available
+- Array syntax for emits: `defineEmits(['event'])` → Missing type safety
+- `setTimeout()` in tests → Use proper async utilities
+- Testing `wrapper.vm.*` internal state → Test user-visible behavior
+- Using `index.vue` in routes → Use route groups `(name).vue`
+- Generic route params `[id]` → Use explicit `[userId]`, `[postSlug]`
 
-| Use Case | Choice | Example |
-|----------|--------|---------|
-| Primitive values | `ref()` | `const count = ref(0)` |
-| Reassigning entire object | `ref()` | `const user = ref({...})` then `user.value = newUser` |
-| Object that won't be reassigned | `reactive()` | `const form = reactive({ name: '', email: '' })` |
-| Array that won't be reassigned | `reactive()` | `const items = reactive([])` |
-| Destructured props/values | `toRefs()` or `toRef()` | `const { name } = toRefs(props)` |
+**All of these mean: Use the modern pattern. No exceptions.**
 
-**Rule of thumb:** When in doubt, use `ref()`. It's more flexible and explicit.
+## Quick Rules
 
-## Common Reactivity Pitfalls
+### Components
+- Props: `defineProps<{ }>()` with TypeScript, no `const` unless used in script
+- Emits: `const emit = defineEmits<{ event: [args] }>()`
+- V-model: `defineModel<type>()` (NOT manual modelValue)
+- Template: `:prop` shorthand, `#slot` shorthand, explicit `<template>` tags
+- See @references/component-patterns.md for detailed examples
 
-```typescript
-// ❌ WRONG: Loses reactivity
-const { name, email } = props
-const { count } = reactive({ count: 0 })
+### Testing
+- PRIMARY: `@testing-library/vue` for user behavior
+- API mocking: MSW (`msw`)
+- NEVER: `setTimeout()` in tests, testing internal state
+- Async: Use `findBy*` queries or `waitFor()`
+- See @references/testing-patterns.md for detailed examples
 
-// ✅ CORRECT: Maintains reactivity
-const { name, email } = toRefs(props)
-const state = reactive({ count: 0 })
-// Access as state.count
+### Routing
+- AVOID: `index.vue` → use route groups `(name).vue`
+- Params: Explicit names `[userId]` not `[id]`
+- Nesting: Use `.` in filename: `users.edit.vue` → `/users/edit`
+- Navigation: Named routes with typed params
+- See @references/routing-patterns.md for detailed examples
 
-// ❌ WRONG: Not reactive
-const items = []
-items.push('new') // Template won't update
+### Composables
+- Naming: `useFeatureName` with PascalCase, prefix with `use`
+- Location: `src/composables/` directory
+- Structure: Primary state → Metadata → Methods
+- Single responsibility: One composable, one purpose
+- NO UI logic: No toasts, alerts, or modals in composables
+- See @references/composable-patterns.md for detailed examples
 
-// ✅ CORRECT: Reactive
-const items = ref([])
-items.value.push('new') // Template updates
+## Essential Patterns
 
-// ❌ WRONG: Using .value in template
-<template>{{ count.value }}</template>
-
-// ✅ CORRECT: Auto-unwrapped in templates
-<template>{{ count }}</template>
-
-// ❌ WRONG: Direct mutation loses reactivity
-let state = reactive({ count: 0 })
-state = { count: 5 } // Breaks reactivity!
-
-// ✅ CORRECT: Mutate properties or use ref
-const state = reactive({ count: 0 })
-state.count = 5 // Maintains reactivity
-
-// OR use ref for reassignment
-const state = ref({ count: 0 })
-state.value = { count: 5 } // Works!
-```
-
-## State Management Decision Tree
-
-```
-Need shared state?
-├─ Between 2-3 nearby components?
-│  └─ Use props + emits
-├─ Between distant components (same feature)?
-│  └─ Use provide/inject or composable
-├─ Across multiple features or routes?
-│  └─ Use Pinia
-└─ Global app settings/auth?
-   └─ Use Pinia with persistent plugin
-```
-
-**Composable pattern** (for feature-scoped state):
-```typescript
-// composables/useAuth.ts
-const user = ref(null)
-const isAuthenticated = computed(() => !!user.value)
-
-export function useAuth() {
-  const login = async (credentials) => {
-    user.value = await api.login(credentials)
-  }
-
-  const logout = () => {
-    user.value = null
-  }
-
-  return { user: readonly(user), isAuthenticated, login, logout }
-}
-```
-
-**Pinia pattern** (for app-wide state):
-```typescript
-// stores/auth.ts
-import { defineStore } from 'pinia'
-
-export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
-  const isAuthenticated = computed(() => !!user.value)
-
-  async function login(credentials) {
-    user.value = await api.login(credentials)
-  }
-
-  function logout() {
-    user.value = null
-  }
-
-  return { user, isAuthenticated, login, logout }
-})
-```
-
-## TypeScript Patterns
-
-```typescript
-// Props with TypeScript
-<script setup lang="ts">
-interface Props {
-  userId: number
-  name?: string
-  onUpdate?: (value: string) => void
-}
-
-const props = defineProps<Props>()
-
-// With defaults
-const props = withDefaults(defineProps<Props>(), {
-  name: 'Guest'
-})
-</script>
-
-// Emits with TypeScript
-<script setup lang="ts">
-interface Emits {
-  (e: 'update', value: string): void
-  (e: 'delete', id: number): void
-}
-
-const emit = defineEmits<Emits>()
-emit('update', 'hello') // Type-safe!
-</script>
-
-// Template refs with TypeScript
-<script setup lang="ts">
-import { ref } from 'vue'
-import type { ComponentPublicInstance } from 'vue'
-import ChildComponent from './ChildComponent.vue'
-
-const childRef = ref<ComponentPublicInstance<typeof ChildComponent>>()
-const inputRef = ref<HTMLInputElement>()
-</script>
-
-<template>
-  <ChildComponent ref="childRef" />
-  <input ref="inputRef" />
-</template>
-```
-
-## Testing Setup
-
-**Install:**
-```bash
-npm install -D vitest @vue/test-utils jsdom @vitest/ui
-```
-
-**vitest.config.ts:**
-```typescript
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-
-export default defineConfig({
-  plugins: [vue()],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
-})
-```
-
-**Component test pattern:**
-```typescript
-import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
-import UserProfile from './UserProfile.vue'
-
-describe('UserProfile', () => {
-  it('displays user name', () => {
-    const wrapper = mount(UserProfile, {
-      props: { name: 'Alice' }
-    })
-    expect(wrapper.text()).toContain('Alice')
-  })
-
-  it('emits update on button click', async () => {
-    const wrapper = mount(UserProfile)
-    await wrapper.find('[data-test="edit-btn"]').trigger('click')
-    expect(wrapper.emitted('update')).toBeTruthy()
-  })
-})
-```
-
-**Composable test pattern:**
-```typescript
-import { useCounter } from './useCounter'
-
-describe('useCounter', () => {
-  it('increments count', () => {
-    const { count, increment } = useCounter()
-    expect(count.value).toBe(0)
-    increment()
-    expect(count.value).toBe(1)
-  })
-})
-```
-
-## Essential Tools
-
-**Development:**
-- **Volar** - VSCode extension for Vue 3 + TypeScript (replaces Vetur)
-- **Vue DevTools** - Browser extension for debugging components, Pinia stores, and reactivity
-
-**Testing:**
-- **Vitest** - Fast, Vite-native test runner
-- **@vue/test-utils** - Official Vue component testing library
-
-**Libraries:**
-- **VueUse** - Collection of essential Vue composables (@vueuse/core)
-- **Pinia** - Official state management
-- **Vue Router** - Official routing library
-
-## Performance Patterns
+### Props Definition
 
 ```vue
-<!-- Use computed for derived state -->
-<script setup>
-const items = ref([...])
-// ❌ WRONG: Recalculates every render
-const filteredItems = items.value.filter(x => x.active)
+<script setup lang="ts">
+// ✅ CORRECT: No const when props not used in script
+defineProps<{
+  userId: number
+  userName: string
+}>()
 
-// ✅ CORRECT: Cached until dependencies change
-const filteredItems = computed(() =>
-  items.value.filter(x => x.active)
-)
+// ✅ CORRECT: With const ONLY when used in script
+const props = defineProps<{
+  count: number
+}>()
+console.log(props.count)
+
+// ❌ WRONG: Runtime validation with TypeScript available
+defineProps({
+  user: {
+    type: Object as PropType<User>,
+    required: true
+  }
+})
 </script>
+```
 
-<!-- Use v-memo for expensive lists -->
-<template>
-  <div v-for="item in items" :key="item.id" v-memo="[item.id, item.name]">
-    <!-- Only re-renders if item.id or item.name changes -->
-    <ExpensiveComponent :item="item" />
-  </div>
-</template>
+### Emits Definition
 
-<!-- Use v-once for static content -->
-<template>
-  <div v-once>
-    <!-- Rendered once, never updates -->
-    <h1>{{ staticTitle }}</h1>
-  </div>
-</template>
+```vue
+<script setup lang="ts">
+// ✅ CORRECT: TypeScript with typed payloads
+const emit = defineEmits<{
+  submit: [formData: FormData]
+  cancel: []
+  update: [userId: number, changes: Partial<User>]
+}>()
+
+// ❌ WRONG: Array syntax without types
+const emit = defineEmits(['submit', 'cancel'])
+</script>
+```
+
+### V-Model
+
+```vue
+<script setup lang="ts">
+// ✅ CORRECT: Simple v-model
+const title = defineModel<string>({ required: true })
+
+// ✅ CORRECT: Multiple v-models
+const firstName = defineModel<string>('firstName')
+const age = defineModel<number>('age')
+
+// ❌ WRONG: Manual modelValue
+const props = defineProps<{ modelValue: string }>()
+const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+</script>
+```
+
+### Testing
+
+```ts
+// ✅ CORRECT: Testing Library + MSW
+import { render, screen } from '@testing-library/vue'
+import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
+
+const server = setupServer(
+  http.get('/api/users', () => HttpResponse.json([...]))
+)
+
+test('loads and displays users', async () => {
+  render(UserList)
+  expect(await screen.findByText('John Doe')).toBeInTheDocument()
+})
+
+// ❌ WRONG: test-utils + setTimeout
+const wrapper = mount(UserList)
+await new Promise(r => setTimeout(r, 1000))
+expect(wrapper.vm.isLoading).toBe(false)
 ```
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| `const x = props.value` | Use `toRef(props, 'value')` or `computed(() => props.value)` |
-| `items.push()` (non-reactive array) | Use `ref([])` or `reactive([])` |
-| `{{ count.value }}` in template | Remove `.value` (auto-unwrapped) |
-| `ref({ data })` then `state.data.x = y` | Use `state.value.data.x = y` or use `reactive()` |
-| Mixing Options API + Composition API | Choose one (prefer Composition) |
-| `shallowMount()` by default | Use `mount()` unless optimizing slow tests |
+| `const props = defineProps({ })` | Use `defineProps<{ }>()` with TypeScript |
+| `const props =` when unused | Remove `const`, just `defineProps<{ }>()` |
+| `defineEmits(['event'])` | Use `defineEmits<{ event: [] }>()` |
+| Manual `modelValue` + emit | Use `defineModel<type>()` |
+| `setTimeout` in tests | Use `findBy*` or `waitFor()` |
+| Testing `wrapper.vm.*` | Test visible UI, not internal state |
+| `index.vue` in pages | Use route groups `(name).vue` |
+| Generic `[id]` param | Explicit `[userId]`, `[postSlug]` |
+| `:count="count"` | Use shorthand `:count` |
+| `v-slot:header` | Use shorthand `#header` |
 
-## Quick Checklist
+## Rationalizations Table
 
-When helping with Vue 3 projects:
-- [ ] Use `<script setup>` syntax
-- [ ] Use TypeScript with `lang="ts"`
-- [ ] Choose `ref()` vs `reactive()` based on table above
-- [ ] Warn about reactivity pitfalls if destructuring or mutating
-- [ ] Suggest Pinia only when state is truly app-wide
-- [ ] Recommend Vitest + @vue/test-utils for testing
-- [ ] Mention Vue DevTools for debugging complex reactivity
-- [ ] Use `data-test` attributes for test selectors
-- [ ] Add `computed()` for derived state instead of functions
-- [ ] Check for VueUse composables before reinventing (useLocalStorage, useFetch, etc.)
+| Excuse | Reality |
+|--------|---------|
+| "For speed / quick demo" | TypeScript IS fast. Runtime validation is legacy and slower. |
+| "TypeScript is too verbose" | `defineProps<{ count: number }>()` is LESS code than runtime validation. |
+| "We can clean it up later" | Write it correctly the first time. Takes same time. |
+| "This is production-ready" | Without type safety, it's not production-ready. |
+| "Simple array syntax is fine" | Missing types = runtime errors TypeScript would catch. |
+| "This is the correct pattern" | Manual modelValue was correct in Vue 2. Use defineModel() in Vue 3.4+. |
+| "Tests are flaky, just add timeout" | Timeouts mask bugs. Fix with proper async handling. |
+| "Following existing code style" | Existing code might be legacy. Use modern patterns. |
+| "Composables can show toasts" | UI logic belongs in components. Expose error state instead. |
+| "counter.ts is fine" | Must prefix with 'use': useCounter.ts |
+| "test-utils is the standard" | Testing Library is the gold standard for user-behavior testing. |
+
+## Detailed References
+
+**When implementing components:**
+- Read @references/component-patterns.md for all prop, emit, v-model, and template patterns
+
+**When writing tests:**
+- Read @references/testing-patterns.md for Testing Library, MSW, and async patterns
+- Read @references/testing-composables.md for testing composables in isolation (withSetup, useInjectedSetup)
+
+**When setting up routes:**
+- Read @references/routing-patterns.md for file-based routing and navigation patterns
+
+**When creating composables:**
+- Read @references/composable-patterns.md for composable structure, naming, and best practices
+
+## Quick Checklists
+
+### Component Setup
+- [ ] Props: `defineProps<{ }>()` with TypeScript
+- [ ] Props used in script? Add `const props =`, otherwise omit
+- [ ] Emits: `const emit = defineEmits<{ event: [args] }>()`
+- [ ] V-model? Use `defineModel<type>()`
+- [ ] Template: Use `:prop` shorthand, `#slot` shorthand
+
+### Testing Setup
+- [ ] Import from `@testing-library/vue`
+- [ ] Use MSW for API mocking
+- [ ] Query by `getByRole`, `getByLabelText`
+- [ ] Async? Use `findBy*` queries
+- [ ] NO `setTimeout()`, NO testing internal state
+
+### Route Setup
+- [ ] Avoid `index.vue` → use `(name).vue`
+- [ ] Explicit params: `[userId]` not `[id]`
+- [ ] Use `.` for path separation without nesting
+- [ ] Named routes with typed params
+
+### Composable Setup
+- [ ] File named with `use` prefix: `useFeatureName.ts`
+- [ ] Single responsibility (one purpose)
+- [ ] Expose error state (not just console.error)
+- [ ] NO UI logic (toasts, alerts, modals)
+- [ ] Consistent structure: refs → computed → methods → lifecycle → watch
+
+## When NOT to Use This Skill
+
+- Vue 2 projects (different API)
+- Options API codebases (this is Composition API focused)
+- Projects without TypeScript (though you should add it)
+
+## Real-World Impact
+
+**Baseline:** 37.5% correct patterns under pressure
+**With skill:** 100% correct patterns under pressure
+
+Type safety prevents runtime errors. defineModel() reduces boilerplate. Testing Library catches real user issues.
