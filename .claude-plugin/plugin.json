@@ -1,0 +1,23 @@
+{
+  "name": "vue-development",
+  "version": "0.1.0",
+  "description": "Modern Vue 3 development with TypeScript, Composition API, defineModel bindings, Testing Library for user-behavior tests, and MSW for API mocking",
+  "author": {
+    "name": "Alexander Opalic"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "typescript",
+    "composition-api",
+    "testing",
+    "defineModel",
+    "testing-library",
+    "msw"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexanderopalic/vue-development-skill"
+  },
+  "license": "MIT"
+}

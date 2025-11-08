@@ -1,0 +1,14 @@
+{
+  "name": "vue-development-marketplace",
+  "owner": {
+    "name": "Alexander Opalic"
+  },
+  "description": "Vue 3 development skills and best practices for TypeScript-first modern Vue applications",
+  "plugins": [
+    {
+      "name": "vue-development",
+      "source": ".",
+      "description": "Modern Vue 3 development with TypeScript, Composition API, and user-behavior testing"
+    }
+  ]
+}

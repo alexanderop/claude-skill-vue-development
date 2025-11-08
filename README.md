@@ -1,6 +1,8 @@
-# Vue Development Skill for Claude Code
+# Vue Development Plugin for Claude Code
 
 A comprehensive, test-driven Vue 3 development skill that enforces modern best practices with 100% compliance under pressure.
+
+**Now available as a Claude Code plugin!** See [PLUGIN-README.md](PLUGIN-README.md) for installation and usage instructions.
 
 ## Overview
 
@@ -10,25 +12,31 @@ This skill teaches Claude agents to write production-quality Vue 3 code using:
 - **User-behavior testing** (Testing Library, not implementation details)
 - **Clean composables** (single responsibility, no UI logic)
 
-## Structure
+## Plugin Structure
 
 ```
-.claude/skills/vue/
-├── SKILL.md (1,216 words)
-│   ├── Red flags (12 anti-patterns)
-│   ├── Quick rules (components, testing, routing, composables)
-│   ├── Essential patterns with examples
-│   ├── Rationalization table (11 excuses countered)
-│   └── Quick checklists (4 domains)
-└── references/
-    ├── component-patterns.md (616 words)
-    ├── composable-patterns.md (1,848 words)
-    ├── routing-patterns.md (589 words)
-    ├── testing-composables.md (1,627 words)
-    └── testing-patterns.md (785 words)
+.claude-plugin/
+├── plugin.json (Plugin manifest)
+├── marketplace.json (Marketplace configuration)
+└── skills/
+    └── vue-development/
+        ├── SKILL.md (1,216 words)
+        │   ├── Red flags (12 anti-patterns)
+        │   ├── Quick rules (components, testing, routing, composables)
+        │   ├── Essential patterns with examples
+        │   ├── Rationalization table (11 excuses countered)
+        │   └── Quick checklists (4 domains)
+        └── references/
+            ├── component-patterns.md (616 words)
+            ├── composable-patterns.md (1,848 words)
+            ├── routing-patterns.md (589 words)
+            ├── testing-composables.md (1,627 words)
+            └── testing-patterns.md (785 words)
 
 Total: 6,681 words (1,216 main + 5,465 references)
 ```
+
+**Legacy Structure:** The original skill files remain in `.claude/skills/vue/` for backward compatibility during migration.
 
 ## What It Covers
 
@@ -112,6 +120,22 @@ Heavy content loads on-demand:
 Main skill stays small (1,216 words) for fast initial load.
 
 ## Installation
+
+### As a Plugin (Recommended)
+
+See [PLUGIN-README.md](PLUGIN-README.md) for detailed installation instructions.
+
+**Quick Start:**
+
+```bash
+# Add the marketplace
+/plugin marketplace add alexanderopalic/vue-development-skill
+
+# Install the plugin
+/plugin install vue-development@vue-development-marketplace
+```
+
+### Legacy Installation (Direct Skill)
 
 1. Place skill files in `.claude/skills/vue/`
 2. The skill auto-loads when:
