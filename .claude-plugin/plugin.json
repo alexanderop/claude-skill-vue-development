@@ -15,9 +15,6 @@
     "testing-library",
     "msw"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/alexanderop/claude-skill-vue-development"
-  },
+  "repository": "https://github.com/alexanderop/claude-skill-vue-development",
   "license": "MIT"
 }
