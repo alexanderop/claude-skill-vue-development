@@ -29,6 +29,7 @@ If you catch yourself thinking or doing ANY of these, STOP:
 - Using `index.vue` in routes → Use route groups `(name).vue`
 - Generic route params `[id]` → Use explicit `[userId]`, `[postSlug]`
 - Composables calling `showToast()`, `alert()`, or modals → Expose error state, component handles UI
+- External composable used in only ONE component → Start inline, extract when reused
 
 **All of these mean: Use the modern pattern. No exceptions.**
 
@@ -40,7 +41,7 @@ If you catch yourself thinking or doing ANY of these, STOP:
 
 **Routing:** Explicit params `[userId]` not `[id]`. Avoid `index.vue`, use `(name).vue`. Use `.` for nesting: `users.edit.vue` → `/users/edit`. See @references/routing-patterns.md
 
-**Composables:** Prefix with `use`, NO UI logic (expose error state instead). See @references/composable-patterns.md
+**Composables:** START INLINE for component-specific logic, extract to external file when reused. External composables: prefix `use`, NO UI logic (expose error state instead). See @references/composable-patterns.md
 
 ## Key Pattern: defineModel()
 

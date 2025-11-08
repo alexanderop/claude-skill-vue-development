@@ -2,6 +2,7 @@
 
 ## Table of Contents
 - [What is a Composable?](#what-is-a-composable)
+- [Inline vs External Composables](#inline-vs-external-composables)
 - [File Naming and Structure](#file-naming-and-structure)
 - [Composable Anatomy](#composable-anatomy)
 - [Single Responsibility Principle](#single-responsibility-principle)
@@ -22,29 +23,226 @@
 
 Composables encapsulate reusable stateful logic using Vue's Composition API.
 
+## Inline vs External Composables
+
+**CRITICAL PRINCIPLE:** Start with inline composables for component-specific logic. Only extract to external files when the logic is reused in multiple components.
+
+### The Decision Framework
+
+```ts
+// ✅ CORRECT: Component-specific logic stays INLINE
+<script setup lang="ts">
+// Inline composable - used only in this component
+function useHiddenFolders() {
+  const showHidden = ref(localStorage.getItem('show-hidden') === 'true')
+
+  watch(showHidden, (value) => {
+    if (value) {
+      localStorage.setItem('show-hidden', 'true')
+    } else {
+      localStorage.removeItem('show-hidden')
+    }
+  })
+
+  return { showHidden }
+}
+
+// Use the inline composable
+const { showHidden } = useHiddenFolders()
+</script>
+
+// ❌ WRONG: Extracting to external file when used in ONE component
+// src/composables/useHiddenFolders.ts - only used in one place!
+export function useHiddenFolders() { /* ... */ }
+```
+
+### When to Use Each Approach
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Inline composable** | Logic specific to ONE component | Form validation, local UI state, component-specific data fetching |
+| **External composable** | Logic reused in 2+ components | Authentication, global state, shared API calls |
+
+### Real-World Example: FolderManager Component
+
+This example shows inline composables organizing component logic:
+
+```vue
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useQuery, mutate } from 'vue-apollo'
+
+// External composables (reusable across app)
+import { useNetworkState } from '@/composables/useNetworkState'
+
+// GraphQL queries
+import FOLDERS_FAVORITE from '@/graphql/folder/favoriteFolders.gql'
+import FOLDER_SET_FAVORITE from '@/graphql/folder/folderSetFavorite.gql'
+
+// Network state (reusable)
+const { networkState } = useNetworkState()
+
+// Component-specific logic as inline composables
+const { showHiddenFolders } = useHiddenFolders()
+const { favoriteFolders, toggleFavorite } = useFavoriteFolders()
+
+// Inline composable #1: Hidden folders management
+function useHiddenFolders() {
+  const showHiddenFolders = ref(
+    localStorage.getItem('show-hidden-folders') === 'true'
+  )
+
+  watch(showHiddenFolders, (value) => {
+    if (value) {
+      localStorage.setItem('show-hidden-folders', 'true')
+    } else {
+      localStorage.removeItem('show-hidden-folders')
+    }
+  })
+
+  return { showHiddenFolders }
+}
+
+// Inline composable #2: Favorite folders management
+function useFavoriteFolders() {
+  const favoriteFolders = useQuery(FOLDERS_FAVORITE, [])
+
+  async function toggleFavorite(folderPath: string) {
+    await mutate({
+      mutation: FOLDER_SET_FAVORITE,
+      variables: { path: folderPath }
+    })
+  }
+
+  return { favoriteFolders, toggleFavorite }
+}
+</script>
+
+<template>
+  <div>
+    <input v-model="showHiddenFolders" type="checkbox" />
+    <ul>
+      <li v-for="folder in favoriteFolders" :key="folder.path">
+        {{ folder.name }}
+        <button @click="toggleFavorite(folder.path)">Toggle</button>
+      </li>
+    </ul>
+  </div>
+</template>
+```
+
+### Benefits of Inline Composables
+
+**Readability:**
+- Related logic grouped together
+- Clear component structure at a glance
+- No need to jump between files
+
+**Maintainability:**
+- Changes stay in one file
+- No premature abstraction
+- Easier to understand component behavior
+
+**Flexibility:**
+- Easy to refactor when needed
+- Can access component-specific imports
+- Simple to extract later if reused
+
+### When to Extract to External File
+
+Extract an inline composable to `src/composables/` when:
+
+1. **Used in 2+ components** - Actual reuse, not "might be reused"
+2. **Shared business logic** - Authentication, API patterns, etc.
+3. **Testing isolation needed** - Complex logic requiring dedicated tests
+
+```ts
+// After you use the SAME logic in a second component, extract it:
+
+// src/composables/useHiddenFolders.ts
+export function useHiddenFolders() {
+  const showHiddenFolders = ref(
+    localStorage.getItem('show-hidden-folders') === 'true'
+  )
+
+  watch(showHiddenFolders, (value) => {
+    if (value) {
+      localStorage.setItem('show-hidden-folders', 'true')
+    } else {
+      localStorage.removeItem('show-hidden-folders')
+    }
+  })
+
+  return { showHiddenFolders }
+}
+```
+
+### Common Anti-Patterns
+
+```ts
+// ❌ WRONG: Extracting too early
+// Creating external composable used in only ONE component
+// src/composables/useComponentSpecificThing.ts - only used once!
+
+// ❌ WRONG: Not organizing component logic
+// Flat <script setup> with mixed concerns
+<script setup lang="ts">
+const showHidden = ref(localStorage.getItem('show-hidden') === 'true')
+watch(showHidden, (value) => { /* ... */ })
+
+const favoriteFolders = useQuery(FOLDERS_FAVORITE, [])
+async function toggleFavorite() { /* ... */ }
+
+// ...hundreds of lines of mixed logic
+</script>
+
+// ✅ CORRECT: Inline composables organize component
+<script setup lang="ts">
+const { showHidden } = useHiddenFolders()
+const { favoriteFolders, toggleFavorite } = useFavoriteFolders()
+
+function useHiddenFolders() { /* grouped logic */ }
+function useFavoriteFolders() { /* grouped logic */ }
+</script>
+```
+
+### Quick Decision Checklist
+
+- [ ] Is this logic used in only ONE component? → Inline composable
+- [ ] Does it organize complex component logic? → Inline composable
+- [ ] Is it actually reused in 2+ components NOW? → External composable
+- [ ] Is it shared business logic (auth, API)? → External composable
+- [ ] Might it be reused someday? → Keep inline until that day comes
+
+**Remember:** Premature extraction is premature optimization. Start inline, extract when you have proof of reuse.
+
 ## File Naming and Structure
+
+**Note:** This section applies to **external composables** in `src/composables/`. Inline composables (defined within components) don't need separate files.
 
 ### Naming Convention
 
 ```
 ✅ CORRECT:
 src/composables/
-  useCounter.ts
-  useUserData.ts
-  useApiRequest.ts
+  useCounter.ts       // External - reused in multiple components
+  useUserData.ts      // External - shared business logic
+  useApiRequest.ts    // External - used across app
 
 ❌ WRONG:
 src/composables/
   counter.ts          // Missing 'use' prefix
   APIrequest.ts       // Wrong casing
   user-data.ts        // Wrong casing
+  useComponentSpecificThing.ts  // Should be inline in component!
 ```
 
-**Rules:**
+**Rules for External Composables:**
 - ALWAYS prefix with `use`
 - ALWAYS use PascalCase after `use`: `useUserData` not `useuserdata`
 - Place in `src/composables/` directory
 - One composable per file
+- Only extract when reused in 2+ components
 
 ### Function Naming
 
@@ -561,6 +759,8 @@ it('fetches user data', async () => {
 
 | Mistake | Fix |
 |---------|-----|
+| Extracting to external file too early | Start inline, extract when reused in 2+ components |
+| External composable used in only ONE component | Move to inline composable in that component |
 | Missing `use` prefix | Always prefix: `useCounter` not `counter` |
 | UI logic in composable | Move toasts/alerts to component |
 | Multiple responsibilities | Split into focused composables |
@@ -572,8 +772,11 @@ it('fetches user data', async () => {
 
 ## Quick Checklist
 
-- [ ] File named with `use` prefix and PascalCase
-- [ ] Located in `src/composables/` directory
+**Before Creating External Composable:**
+- [ ] Is this logic used in 2+ components? (If not, keep inline)
+- [ ] Is this shared business logic that should be centralized?
+
+**For All Composables (Inline and External):**
 - [ ] Single responsibility (one thing well)
 - [ ] Exposes error state (not just console.error)
 - [ ] No UI logic (toasts, alerts, modals)
@@ -581,3 +784,8 @@ it('fetches user data', async () => {
 - [ ] Named object return (not array)
 - [ ] Full TypeScript types
 - [ ] 4+ params use object, 3 or fewer use individual args
+
+**For External Composables Only:**
+- [ ] File named with `use` prefix and PascalCase
+- [ ] Located in `src/composables/` directory
+- [ ] Actually reused in multiple components (not "might be reused")
