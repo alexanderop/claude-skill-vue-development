@@ -129,7 +129,7 @@ See [PLUGIN-README.md](PLUGIN-README.md) for detailed installation instructions.
 
 ```bash
 # Add the marketplace
-/plugin marketplace add alexanderopalic/vue-development-skill
+/plugin marketplace add alexanderop/claude-skill-vue-development
 
 # Install the plugin
 /plugin install vue-development@vue-development-marketplace

@@ -25,11 +25,11 @@ This plugin provides a comprehensive skill for building Vue 3 applications with:
 /plugin install vue-development@vue-development-marketplace
 ```
 
-### From GitHub (once published)
+### From GitHub
 
 ```bash
 # Add the marketplace
-/plugin marketplace add alexanderopalic/vue-development-skill
+/plugin marketplace add alexanderop/claude-skill-vue-development
 
 # Install the plugin
 /plugin install vue-development@vue-development-marketplace
@@ -171,8 +171,8 @@ Verified metrics from production usage:
 
 ## Support
 
-- **Issues:** [GitHub Issues](https://github.com/alexanderopalic/vue-development-skill/issues)
-- **Repository:** [vue-development-skill](https://github.com/alexanderopalic/vue-development-skill)
+- **Issues:** [GitHub Issues](https://github.com/alexanderop/claude-skill-vue-development/issues)
+- **Repository:** [claude-skill-vue-development](https://github.com/alexanderop/claude-skill-vue-development)
 
 ## License
 
