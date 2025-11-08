@@ -1,6 +1,6 @@
 ---
 name: vue-development
-description: Use when creating Vue 3 components, implementing v-model, defining props/emits, setting up routes, or writing Vue tests - enforces TypeScript-first patterns with Composition API, defineModel for bindings, Testing Library for user-behavior tests, and MSW for API mocking
+description: Use when planning or implementing Vue 3 projects - helps architect component structure, plan feature implementation, and enforce TypeScript-first patterns with Composition API, defineModel for bindings, Testing Library for user-behavior tests, and MSW for API mocking. Especially useful in planning phase to guide proper patterns before writing code.
 ---
 
 # Vue Development
